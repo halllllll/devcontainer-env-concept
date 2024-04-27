@@ -7,13 +7,17 @@
     "../../compose.dev.yml"
   ],
   "service": "serverside",
-  "workspaceFolder": "/app",
+  "workspaceFolder": "/go/src/server",
+  "postAttachCommand": "git config --global --add safe.directory /go/src",
   "forwardPorts": [8085],
 
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.
     "vscode": {
+      "settings": {
+        "git.openRepositoryInParentFolders": "always"
+      },
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
         "golang.go"

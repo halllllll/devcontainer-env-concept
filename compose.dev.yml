@@ -1,17 +1,19 @@
 services:
   frontend:
     build:
-      context: .
+      context: ./docker
       args:
         - BUN_VER=${BUN_DEV_VER}
-      dockerfile: ./docker/Dockerfile.front.dev
+      dockerfile: Dockerfile.front.dev
     container_name: frontApp
     working_dir: /app
     env_file:
       - "./.env"
     tty: true
     volumes:
-      - ./client/app:/app:cached
+      # - ./client/app:/app:cached
+      - .:/app:cached
+
     restart: always
     ports:
       - "5173:5173"
@@ -19,17 +21,18 @@ services:
 
   serverside:
     build:
-      context: .
+      context: ./docker
       args:
         - GO_VER=${GO_DEV_VER}
-      dockerfile: ./docker/Dockerfile.server.dev
+      dockerfile: Dockerfile.server.dev
     container_name: serverApp
-    working_dir: /app
+    working_dir: /go/src/server
     env_file:
       - "./.env"
     tty: true
     volumes:
-      - ./server/app:/app:cached
+      # - ./server:/go/src:cached
+      - .:/go/src:cached
     restart: always
     ports:
       - "8090:8085"
