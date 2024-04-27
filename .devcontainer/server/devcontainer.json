@@ -1,0 +1,23 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
+{
+  "name": "Backend Dev Env",
+  // "dockerFile": "Dockerfile",
+  "dockerComposeFile": [
+    "../../compose.dev.yml"
+  ],
+  "service": "serverside",
+  "workspaceFolder": "/app",
+  "forwardPorts": [8085],
+
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "golang.go"
+      ]
+    }
+  }
+}

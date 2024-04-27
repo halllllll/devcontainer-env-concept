@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        - BUN_VER=${BUN_DEV_VER}
+      dockerfile: ./docker/Dockerfile.front.dev
+    container_name: frontApp
+    working_dir: /app
+    env_file:
+      - "./.env"
+    tty: true
+    volumes:
+      - ./client/app:/app:cached
+    restart: always
+    ports:
+      - "5173:5173"
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+  serverside:
+    build:
+      context: .
+      args:
+        - GO_VER=${GO_DEV_VER}
+      dockerfile: ./docker/Dockerfile.server.dev
+    container_name: serverApp
+    working_dir: /app
+    env_file:
+      - "./.env"
+    tty: true
+    volumes:
+      - ./server/app:/app:cached
+    restart: always
+    ports:
+      - "8090:8085"
+    # environment:
+    #   POSTGRES_HOST: "${POSTGRES_HOST}"
+    # depends_on:
+    #   - postgres
+    # command: ["/app/main"] <- prod用
+    command: /bin/sh -c "while sleep 1000; do :; done"
