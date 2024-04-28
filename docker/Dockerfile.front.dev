@@ -33,4 +33,4 @@ RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(_
 
 EXPOSE 5173
 
-ENTRYPOINT bun install && bun dev
+# ENTRYPOINT bun install && bun dev

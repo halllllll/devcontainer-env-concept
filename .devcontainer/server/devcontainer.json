@@ -2,7 +2,6 @@
 // README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
 {
   "name": "Backend Dev Env",
-  // "dockerFile": "Dockerfile",
   "dockerComposeFile": [
     "../../compose.dev.yml"
   ],

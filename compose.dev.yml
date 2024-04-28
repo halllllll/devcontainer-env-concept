@@ -1,17 +1,16 @@
 services:
   frontend:
     build:
-      context: ./docker
+      context: .
       args:
         - BUN_VER=${BUN_DEV_VER}
-      dockerfile: Dockerfile.front.dev
+      dockerfile: ./docker/Dockerfile.front.dev
     container_name: frontApp
-    working_dir: /app
+    working_dir: /app/client # devcontainer.jsonのworkspaceFolderと合わせる
     env_file:
       - "./.env"
     tty: true
     volumes:
-      # - ./client/app:/app:cached
       - .:/app:cached
 
     restart: always
@@ -21,17 +20,16 @@ services:
 
   serverside:
     build:
-      context: ./docker
+      context: .
       args:
         - GO_VER=${GO_DEV_VER}
-      dockerfile: Dockerfile.server.dev
+      dockerfile: ./docker/Dockerfile.server.dev
     container_name: serverApp
     working_dir: /go/src/server
     env_file:
       - "./.env"
     tty: true
     volumes:
-      # - ./server:/go/src:cached
       - .:/go/src:cached
     restart: always
     ports:
