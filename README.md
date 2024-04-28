@@ -19,14 +19,13 @@
 ├── .gitignore
 ├── README.md
 ├── client
-│   └── app
-│       ├── index.html
-│       ├── node_modules
-│       ├── package.json
-│       ├── public
-│       ├── src
-│       ├── tsconfig.json
-│       └── vite.config.ts
+│   ├── index.html
+│   ├── node_modules
+│   ├── package.json
+│   ├── public
+│   ├── src
+│   ├── tsconfig.json
+│   └── vite.config.ts
 ├── compose.dev.yml
 ├── compose.prod.yml
 ├── docker
