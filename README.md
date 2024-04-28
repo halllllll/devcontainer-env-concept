@@ -33,8 +33,7 @@
 │   ├── Dockerfile.server.dev
 │   └── Dockerfile.server.prod
 └── server
-    └── app
-        ├── go.mod
-        ├── go.sum
-        └── main.go
+    ├── go.mod
+    ├── go.sum
+    └── main.go
 ```

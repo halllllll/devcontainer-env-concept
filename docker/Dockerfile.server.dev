@@ -1,7 +1,6 @@
-# 本番環境にあわせる
 ARG GO_VER
 FROM golang:${GO_VER}
-WORKDIR /app
+WORKDIR /
 
 COPY go.mod* go.sum* ./
 # RUN go mod download

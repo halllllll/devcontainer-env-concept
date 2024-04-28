@@ -6,7 +6,7 @@ COPY go.mod* go.sum* ./
 RUN go mod download
 COPY . .
 
-# この先はビルド用
+# 本番環境にあわせる
 RUN GOOS=linux GOARCH=amd64 go build -o main /app/main.go
 
 FROM --platform=linux/amd64 ${GO_PROD_VER}
