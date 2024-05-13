@@ -1,12 +1,17 @@
-# build frontend  code
+# * 環境によってはDockerfileの先頭の制約がある
+# https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#from
 ARG BUN_VER
 ARG GO_DEV_VER
 ARG GO_PROD_VER
+ARG GO_OS
+ARG GO_ARCH
+ARG GO_PROD_PLATFORM
 
+# build frontend  code
 FROM oven/bun:${BUN_VER} AS frontend
 WORKDIR /app
 
-# # Config Bun
+# Config Bun (不要？)
 ENV PATH="~/.bun/bin:${PATH}"
 RUN ln -s /usr/local/bin/bun /usr/local/bin/node
 
@@ -16,7 +21,9 @@ COPY ./client .
 RUN bun install && bunx --bun vite build
 
 ARG GO_DEV_VER
-FROM "golang:${GO_DEV_VER}" AS builder
+ARG GO_OS
+ARG GO_ARCH
+FROM golang:${GO_DEV_VER} AS builder
 
 WORKDIR /app
 COPY ./server/go.mod* ./server/go.sum* ./
@@ -24,16 +31,17 @@ RUN go mod download
 COPY ./server .
 COPY . .
 
-# 本番環境にあわせる
-RUN GOOS=linux GOARCH=amd64 go build -o main /app/main.go
+# *本番環境にあわせる
+RUN GOOS=${GO_OS} GOARCH=${GO_ARCH} go build -o main /app/main.go
 
 ARG GO_PROD_VER
-FROM --platform=linux/amd64 ${GO_PROD_VER}
+ARG GO_PROD_PLATFORM
+FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER}
 
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=frontend /app/dist .
-# COPY .env .
+# COPY .env . TODO: secretsとかを使いたい
 
 EXPOSE 8085
 CMD [ "/app/main" ]

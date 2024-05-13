@@ -3,9 +3,12 @@ services:
     build:
       context: .
       args:
-        - BUN_VER=${BUN_VER}
+        - BUN_VER=${BUN_DEV_VER}
         - GO_DEV_VER=${GO_DEV_VER}
         - GO_PROD_VER=${GO_PROD_VER}
+        - GO_OS=${GO_OS}
+        - GO_ARCH=${GO_ARCH}
+        - GO_PROD_PLATFORM=${GO_PROD_PLATFORM}
       dockerfile: ./docker/Dockerfile.prod
       
     container_name: coreApp
