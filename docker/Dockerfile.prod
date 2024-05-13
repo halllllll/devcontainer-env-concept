@@ -1,0 +1,39 @@
+# build frontend  code
+ARG BUN_VER
+ARG GO_DEV_VER
+ARG GO_PROD_VER
+
+FROM oven/bun:${BUN_VER} AS frontend
+WORKDIR /app
+
+# # Config Bun
+ENV PATH="~/.bun/bin:${PATH}"
+RUN ln -s /usr/local/bin/bun /usr/local/bin/node
+
+# COPY ./client/package.json .
+# COPY ./client/bun.lockb .
+COPY ./client .
+RUN bun install && bunx --bun vite build
+
+ARG GO_DEV_VER
+FROM "golang:${GO_DEV_VER}" AS builder
+
+WORKDIR /app
+COPY ./server/go.mod* ./server/go.sum* ./
+RUN go mod download
+COPY ./server .
+COPY . .
+
+# 本番環境にあわせる
+RUN GOOS=linux GOARCH=amd64 go build -o main /app/main.go
+
+ARG GO_PROD_VER
+FROM --platform=linux/amd64 ${GO_PROD_VER}
+
+WORKDIR /app
+COPY --from=builder /app/main .
+COPY --from=frontend /app/dist .
+# COPY .env .
+
+EXPOSE 8085
+CMD [ "/app/main" ]

@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        - BUN_VER=${BUN_VER}
+        - GO_DEV_VER=${GO_DEV_VER}
+        - GO_PROD_VER=${GO_PROD_VER}
+      dockerfile: ./docker/Dockerfile.prod
+      
+    container_name: coreApp
+    restart: always
