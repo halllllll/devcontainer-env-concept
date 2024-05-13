@@ -14,8 +14,8 @@ services:
       - .:/app:cached
 
     restart: always
-    ports:
-      - "5173:5173"
+    # ports:
+    #   - "127.0.0.1:5173:5173"
     command: /bin/sh -c "while sleep 1000; do :; done"
 
   serverside:
@@ -32,8 +32,8 @@ services:
     volumes:
       - .:/go/src:cached
     restart: always
-    ports:
-      - "8090:8085"
+    # ports:
+    #   - "127.0.0.1:8090:8085"
     # environment:
     #   POSTGRES_HOST: "${POSTGRES_HOST}"
     # depends_on:
