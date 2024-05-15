@@ -1,26 +1,22 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
 {
-  "name": "Backend Dev Env",
-  "dockerComposeFile": [
-    "../../compose.dev.yml"
-  ],
-  "service": "serverside",
-  "workspaceFolder": "/go/src/server",
-  "postAttachCommand": "git config --global --add safe.directory /go/src",
-  "forwardPorts": [8085],
+	"name": "Backend Dev Env",
+	"dockerComposeFile": ["../../docker/dev/compose.dev.server.yaml"],
+	"service": "serverside",
+	"workspaceFolder": "/workspace",
+	"postAttachCommand": "git config --global --add safe.directory /workspace",
+	// "forwardPorts": [8085],
 
-  // Configure tool-specific properties.
-  "customizations": {
-    // Configure properties specific to VS Code.
-    "vscode": {
-      "settings": {
-        "git.openRepositoryInParentFolders": "always"
-      },
-      // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "golang.go"
-      ]
-    }
-  }
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				"git.openRepositoryInParentFolders": "always"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": ["golang.go"]
+		}
+	}
 }

@@ -1,30 +1,23 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/marcosgomesneto/bun-devcontainers/tree/main/src/basic-bun
 {
-  "name": "Frontend Dev Env",
-  "dockerComposeFile": [
-    "../../compose.dev.yml"
-  ],
-  "service": "frontend",
-  
-  "workspaceFolder": "/app/client", // compose.ymlのworking_dirに合わせる
-  "postAttachCommand": "git config --global --add safe.directory /apppppp", // devcontainerから使う分にはフォルダ名はなんでもよさそう
+	"name": "Frontend Dev Env",
+	"dockerComposeFile": ["../../docker/dev/compose.dev.front.yaml"],
+	"service": "frontend",
 
-  "forwardPorts": [
-    5173
-  ],
-  // Configure tool-specific properties.
-  "customizations": {
-    // Configure properties specific to VS Code.
-    "vscode": {
-      "settings": {
-        "git.openRepositoryInParentFolders": "always"
-      },
-      // Add the IDs of extensions you want installed when the container is created.
-      "extensions": [
-        "oven.bun-vscode",
-        "biomejs.biome"
-      ]
-    }
-  }
+	"workspaceFolder": "/workspace", // compose.ymlのworking_dirに合わせる
+	"postAttachCommand": "git config --global --add safe.directory /workspace", // devcontainerから使う分にはフォルダ名はなんでもよさそう
+
+	// "forwardPorts": [5173],
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				"git.openRepositoryInParentFolders": "always"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": ["oven.bun-vscode", "biomejs.biome"]
+		}
+	}
 }

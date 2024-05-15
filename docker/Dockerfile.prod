@@ -1,4 +1,4 @@
-# * 環境によってはDockerfileの先頭の制約がある
+# * 環境によってはDockerfileの先頭行コマンドの制約がある
 # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#from
 ARG BUN_VER
 ARG GO_DEV_VER
@@ -7,7 +7,7 @@ ARG GO_OS
 ARG GO_ARCH
 ARG GO_PROD_PLATFORM
 
-# build frontend  code
+# build frontend code
 FROM oven/bun:${BUN_VER} AS frontend
 WORKDIR /app
 
@@ -15,25 +15,31 @@ WORKDIR /app
 ENV PATH="~/.bun/bin:${PATH}"
 RUN ln -s /usr/local/bin/bun /usr/local/bin/node
 
-# COPY ./client/package.json .
-# COPY ./client/bun.lockb .
-COPY ./client .
+# 同じ内容ならキャッシュが効くので同じ内容になりやすそうな操作はステップを分ける
+COPY ./client/package.json .
+COPY ./client/bun.lockb .
 RUN bun install && bunx --bun vite build
+COPY ./client .
 
+# golang app for 1st building step
 ARG GO_DEV_VER
 ARG GO_OS
 ARG GO_ARCH
 FROM golang:${GO_DEV_VER} AS builder
 
 WORKDIR /app
+
+# 同じ内容ならキャッシュが効くので同じ内容になりやすそうな操作はステップを分ける
 COPY ./server/go.mod* ./server/go.sum* ./
 RUN go mod download
 COPY ./server .
 COPY . .
 
+# 1st building
 # *本番環境にあわせる
 RUN GOOS=${GO_OS} GOARCH=${GO_ARCH} go build -o main /app/main.go
 
+# 2nd building step, merge frontend code
 ARG GO_PROD_VER
 ARG GO_PROD_PLATFORM
 FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER}
@@ -41,7 +47,7 @@ FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER}
 WORKDIR /app
 COPY --from=builder /app/main .
 COPY --from=frontend /app/dist .
-# COPY .env . TODO: secretsとかを使いたい
+# COPY .env . TODO: secretsとかを使いたい TODO: secretsはさほど意味ないらしい？
 
 EXPOSE 8085
 CMD [ "/app/main" ]

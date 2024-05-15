@@ -1,6 +1,6 @@
 ARG BUN_VER
 FROM oven/bun:${BUN_VER}
-WORKDIR /app
+WORKDIR /workspace
 
 # Config Bun
 ENV PATH="~/.bun/bin:${PATH}"

@@ -1,0 +1,35 @@
+services:
+  serverside:
+    build:
+      context: .
+      args:
+        - GO_VER=${GO_VER}
+      dockerfile: ./Dockerfile.dev.server
+    container_name: serverApp
+    working_dir: /workspace
+    env_file:
+      - "./.env"
+    tty: true
+    volumes:
+      - ../../server:/workspace:cached
+    restart: always
+    # ports: # 開放しないと開発時にブラウザから疎通できない
+    #   # - "127.0.0.1:8085:8085"
+    #   - 8085:8085
+    # environment:
+    #   POSTGRES_HOST: "${POSTGRES_HOST}"
+    # depends_on:
+    #   - postgres
+    # command: ["/app/main"] <- prod用
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      - container-link
+
+networks:
+  # docker-composeで勝手にデフォルトネットワークが生成される予防。（自動で全コンテナが所属するbridgeを指定）
+  default:
+    external: true
+    name: bridge
+  container-link:
+    name: devcontainer-network
+    driver: bridge

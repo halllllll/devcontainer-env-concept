@@ -4,7 +4,10 @@
 - コード編集は開発用の`Dockerfile`をもとにDevcontainerで行う
 - イメージのビルドは本番用のcompose.ymlとDockerfileで行う（予定）
 - モノレポ
-
+- 開発用はfrontend,backend,dbの3つのコンテナを動かす
+- TODO: 開発時のプロキシをちゃんとする
+- 本番用のビルドではfrontendコードをビルドしたものをbackendのイメージに同梱しAppとする（予定）
+  - なので、本番用ではDBとAppの2つのイメージがある（予定）
 
 雰囲気
 ```

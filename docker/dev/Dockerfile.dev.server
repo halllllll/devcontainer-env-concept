@@ -1,6 +1,6 @@
 ARG GO_VER
 FROM golang:${GO_VER}
-WORKDIR /
+WORKDIR /workspace
 
 COPY go.mod* go.sum* ./
 # RUN go mod download

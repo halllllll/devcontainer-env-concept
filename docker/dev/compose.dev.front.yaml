@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build:
+      context: .
+      args:
+        - BUN_VER=${BUN_DEV_VER}
+      dockerfile: ./Dockerfile.dev.front
+    container_name: frontApp
+    working_dir: /workspace # devcontainer.jsonのworkspaceFolderと合わせる
+    env_file:
+      - "./.env"
+    tty: true
+    volumes:
+      - ../../client:/workspace:cached
+
+    restart: always
+    # ports: # 開放しないと開発時にブラウザから疎通できない??????
+    #   # - "127.0.0.1:5173:5173"
+    #   - 5173:5173
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    networks:
+      - devcontainer-network
+
+networks:
+  devcontainer-network:
+    external: true
