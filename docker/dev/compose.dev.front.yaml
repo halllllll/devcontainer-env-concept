@@ -6,7 +6,7 @@ services:
         - BUN_VER=${BUN_DEV_VER}
       dockerfile: ./Dockerfile.dev.front
     container_name: frontApp
-    working_dir: /workspace # devcontainer.jsonのworkspaceFolderと合わせる
+    working_dir: /workspace
     env_file:
       - "./.env"
     tty: true

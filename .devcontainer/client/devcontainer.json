@@ -4,7 +4,6 @@
 	"name": "Frontend Dev Env",
 	"dockerComposeFile": ["../../docker/dev/compose.dev.front.yaml"],
 	"service": "frontend",
-
 	"workspaceFolder": "/workspace/client", // 今回の設定だとworkspace/{実在するフォルダ}でコンテナが開く
 	"postAttachCommand": "git config --global --add safe.directory /frontend/app", // devcontainerから使う分にはフォルダ名はなんでもよさそう
 
