@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -22,22 +23,23 @@ func corsHandler(next http.Handler) http.Handler {
 
 func main() {
 	router := mux.NewRouter()
-	router.HandleFunc("/api/hello", hello).Methods("GET")
+	router.HandleFunc("/hello", hello).Methods("GET")
 
 	router.Use(mux.CORSMethodMiddleware(router))
 	router.Use(corsHandler)
-	
+	fmt.Println("start")
 	http.ListenAndServe(":8085", router)
 }
 
 type Ping struct {
-	Status int 
-	Rssult string
+	Status int `json:"status"`
+	Cur time.Time `json:"timestamp"`
+	Message string `json:"message"`
 }
 
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hello!!!")
-	p := Ping{http.StatusOK, "hello!"}
+	fmt.Println("hello")
+	p := Ping{Status: http.StatusOK, Cur: time.Now(), Message: "hello!!!"}
 	res, err := json.Marshal(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -47,5 +49,5 @@ func hello(w http.ResponseWriter, r *http.Request) {
 }
 
 func echoHello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Hello World</h1>")
+	fmt.Fprintf(w, "<h1>Hello World!</h1>")
 }

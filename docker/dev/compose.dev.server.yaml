@@ -11,7 +11,7 @@ services:
       - "./.env"
     tty: true
     volumes:
-      - ../../server:/workspace:cached
+      - ../..:/workspace:cached
     restart: always
     # ports: # 開放しないと開発時にブラウザから疎通できない
     #   # - "127.0.0.1:8085:8085"
