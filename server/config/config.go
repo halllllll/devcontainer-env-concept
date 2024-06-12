@@ -4,7 +4,7 @@ import "github.com/caarlos0/env/v11"
 
 type Config struct {
 	Env  string `env:"TODO_ENV" envDefault:"dev"`
-	Port int    `env:"PORT" envDefault:"9999"`
+	Port int    `env:"PORT" envDefault:"9995"`
 }
 
 func New() (*Config, error) {

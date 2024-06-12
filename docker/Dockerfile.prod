@@ -7,6 +7,8 @@ ARG GO_OS
 ARG GO_ARCH
 ARG GO_PROD_PLATFORM
 
+# Goアプリにフロントエンドコードを同梱した単一のイメージを作成する
+
 # build frontend code
 FROM oven/bun:${BUN_VER} AS frontend
 WORKDIR /app
@@ -18,8 +20,9 @@ RUN ln -s /usr/local/bin/bun /usr/local/bin/node
 # 同じ内容ならキャッシュが効くので同じ内容になりやすそうな操作はステップを分ける
 COPY ./client/package.json .
 COPY ./client/bun.lockb .
-RUN bun install && bunx --bun vite build
+RUN bun install
 COPY ./client .
+RUN bunx --bun vite build
 
 # golang app for 1st building step
 ARG GO_DEV_VER
@@ -37,12 +40,12 @@ COPY . .
 
 # 1st building
 # *本番環境にあわせる
-RUN GOOS=${GO_OS} GOARCH=${GO_ARCH} go build -o main /app/main.go
+RUN GOOS=${GO_OS} GOARCH=${GO_ARCH} go build -trimpath -ldflags "-w -s" -o main /app/main.go
 
 # 2nd building step, merge frontend code
 ARG GO_PROD_VER
 ARG GO_PROD_PLATFORM
-FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER}
+FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER} AS production
 
 WORKDIR /app
 COPY --from=builder /app/main .

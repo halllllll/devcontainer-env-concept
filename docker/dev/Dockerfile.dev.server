@@ -1,22 +1,23 @@
 ARG GO_DEV_IMAGE
-ARG GO_PROD_IMAGE
+# 開発用と本番用のDockerfileを完全に分けることにする
+# ARG GO_PROD_IMAGE
 
-# ----- production builder -----
+# # ----- production builder -----
 
-FROM ${GO_DEV_IMAGE} AS builder
+# FROM ${GO_DEV_IMAGE} AS builder
 
-WORKDIR /app
+# WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
-COPY . .
-RUN go build -trimpath -ldflags "-w -s" -o app
+# COPY go.mod go.sum ./
+# RUN go mod download
+# COPY . .
+# RUN go build -trimpath -ldflags "-w -s" -o app
 
-# ----- production -----
+# # ----- production -----
 
-FROM ${GO_PROD_IMAGE} AS deploy
-COPY --from=builder /app/app .
-CMD ["./app"]
+# FROM ${GO_PROD_IMAGE} AS deploy
+# COPY --from=builder /app/app .
+# CMD ["./app"]
 
 
 # ----- development -----
@@ -25,7 +26,8 @@ FROM ${GO_DEV_IMAGE} AS dev
 WORKDIR /workspace
 
 COPY go.mod* go.sum* ./
-# RUN go mod download
+RUN go mod init sample/devcontainer-env-concept
+RUN go mod download
 COPY . .
 
 # プロンプトを見やすくする https://zenn.dev/daifukuninja/articles/9e903808f4147d
@@ -46,6 +48,6 @@ RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
 
 RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;34m\]\\$ \[\033[00m\]"' >> ~/.bashrc
 
-RUN go install github.com/cosmtrek/air@latest
+RUN go install github.com/air-verse/air@latest
 
 CMD ["air"]
