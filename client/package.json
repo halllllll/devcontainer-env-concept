@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check-updates": "bunx ncu"
   },
   "dependencies": {
     "npm-check-updates": "^16.14.20",
@@ -15,12 +16,12 @@
     "remove": "^0.1.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.7.3",
-    "@types/node": "^20.12.12",
-    "@types/react": "^18.3.2",
+    "@biomejs/biome": "1.8.1",
+    "@types/node": "^20.14.2",
+    "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react-swc": "^3.6.0",
+    "@vitejs/plugin-react-swc": "^3.7.0",
     "typescript": "^5.4.5",
-    "vite": "^5.2.11"
+    "vite": "^5.2.13"
   }
 }
