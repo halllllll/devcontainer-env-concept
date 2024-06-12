@@ -5,6 +5,8 @@
 	"dockerComposeFile": ["../../docker/dev/compose.dev.server.yaml"],
 	"service": "serverside",
 	"workspaceFolder": "/workspace/server", // 今回の設定だとworkspace/{実在するフォルダ}でコンテナが開く
+	// <none>:<none>許すまじ
+	"initializeCommand": "docker image prune",
 	"postAttachCommand": "git config --global --add safe.directory /workspace", // devcontainerから使う分にはフォルダ名はなんでもよさそう
 
 	// "forwardPorts": [8085], ポートフォワーディングの設定は不要
