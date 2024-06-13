@@ -52,5 +52,5 @@ COPY --from=builder /app/main .
 COPY --from=frontend /app/dist .
 # COPY .env . TODO: secretsとかを使いたい TODO: secretsはさほど意味ないらしい？
 
-EXPOSE 8085
+# EXPOSE 8085
 CMD [ "/app/main" ]

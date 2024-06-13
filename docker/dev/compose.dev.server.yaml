@@ -4,7 +4,7 @@ services:
       context: .
       args:
         - GO_DEV_IMAGE=${GO_DEV_IMAGE}
-        - GO_PROD_IMAGE=${GO_PROD_IMAGE}
+        # - GO_PROD_IMAGE=${GO_PROD_IMAGE}
       dockerfile: ./Dockerfile.dev.server
       target: dev
     container_name: serverApp
@@ -16,20 +16,40 @@ services:
       - ../..:/workspace:cached
     environment:
       # POSTGRES_HOST: "${POSTGRES_HOST}"
-      PORT: 9995
+      PORT: ${GO_DEV_PORT}
     restart: always
-    # depends_on:
-    #   - postgres
-    # command: ["/app/main"] <- prod用
-    command: /bin/sh -c "while sleep 1000; do :; done"
-    networks:
-      - container-link
+    depends_on:
+        db:
+          condition: service_healthy
+    # networks:
+    #   - container-link
+  db:
+    image: postgres:latest
+    container_name: appDB
+    restart: unless-stopped
+    volumes:
+      - app-db:/var/lib/postgresql/data
+      - ../_tools/postgres/init:/docker-entrypoint-initdb.d
+    environment:
+      # PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: "Asia/Tokyo"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --no-locale"
+    env_file:
+      - .env
+    healthcheck:
+      test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: postgres -c log_destination=stderr -c log_statement=all -c log_connections=on -c log_disconnections=on
+volumes:
+  app-db:
 
-networks:
-  # docker-composeで勝手にデフォルトネットワークが生成される予防。（自動で全コンテナが所属するbridgeを指定）
-  default:
-    external: true
-    name: bridge
-  container-link:
-    name: devcontainer-network
-    driver: bridge
+# networks:
+#   # docker-composeで勝手にデフォルトネットワークが生成される予防。（自動で全コンテナが所属するbridgeを指定）
+#   default:
+#     external: true
+#     name: bridge
+#   container-link:
+#     name: devcontainer-network
+#     driver: bridge
