@@ -6,7 +6,7 @@
 | --------------------- | ------------ | ---------- |
 | React,Vite,TypeScript | Go           | PostgreSQL |
 
-## my opinions
+## goal
 - コード編集も実行環境もコンテナを想定
 - コード編集は開発用のフロント・サーバーなど環境ごとに用意した`compose.yaml`をもとにDevcontainerで行う
 - 本番用イメージのビルドは`Dockerfile.prod`で行う
@@ -20,6 +20,7 @@
   - なので、本番用ではDBとAppの2つのイメージがある（予定）
 
 ## (my own claims, NOT :todo)
+- アプリ自体は特になにもしないもので、UIなどにはこだわらない
 - docker設定ファイル(Dockerfile, composeファイル, dev or prod)を置く場所
   - 同じ場所にある必要がないが
 - `.env`を置く場所と設定の方針
@@ -27,22 +28,9 @@
 
 ## TODO
 - DBをからめたイメージの作成
+  - おそらく`Dockerfile.prod`の場所が関わってくる
+    - 今はDB用のSQLは`_tools`に置いているので
 
-
-
-- dev env(devcontainer)の場合にはvite devサーバーからproxyしてGoのAPIとコネクションする
-- prodの場合にはビルド済のフロントエンドコードをembedし、staticファイルとして扱う
-- ということをしたいので、Go側では「プロダクションビルドの場合はFSから読む」「dev環境ではGoはAPIサーバーに徹する（フロントの確認はviteサーバーに任せる）」をする
-  - Goビルド時にオプションで読ませる・デフォルトは`dev`とする、でいい
-- production build用のcompose.yamlは不要だと思われる
-  - ルートからDockerfile一枚でよさそう
-  - envをなにがしかで渡す
-    - 主にdata source
-- ローカル・本番両方とも同じ設定のアプリが必要
-  - となるとfrontend側でも環境変数の切り替えが必要
-    - viteでいける（えらい）
-- 一元管理したさ
-  - やりながら考える
 
 # 雰囲気
 ```
@@ -56,6 +44,7 @@
 ├── .env
 ├── .gitignore
 ├── README.md
+├── Makefile
 ├── client
 │   ├── index.html
 │   ├── node_modules
@@ -65,13 +54,17 @@
 │   ├── tsconfig.json
 │   └── vite.config.ts
 ├── docker
+│   ├── Dockerfile.prod
 │   └── dev
 │       ├── Dockerfile.dev.front
 │       ├── Dockerfile.dev.server
+│       ├── _tools
 │       ├── compose.dev.front.yaml
 │       └── compose.dev.server.yaml
 └── server
     ├── go.mod
     ├── go.sum
-    └── main.go
+    ├── main.go
+    └── static
+        └── index.html
 ```

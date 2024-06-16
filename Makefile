@@ -15,10 +15,13 @@ build:
 	--force-rm \
 	-t ${IMAGE_NAME}:latest . \
 	&& docker image prune -f
-
+ß
 save:
 	docker save ${IMAGE_NAME}:latest -o app.tar
 
 # ローカル確認用(ポートは好きに変えてね)
 run:
 	docker container run --rm -p 5522:${CONTAINER_PORT} -e GO_APP_PORT=${CONTAINER_PORT} ${IMAGE_NAME}
+
+## 実行する場合サンプル。公開するときは`-p　8080:10201`なんかも必要かも
+## docker run --rm --name test --expose 10201 -e GO_APP_PORT=10201 env-concept-demo
