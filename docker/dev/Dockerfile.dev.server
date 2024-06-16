@@ -1,24 +1,4 @@
 ARG GO_DEV_IMAGE
-# 開発用と本番用のDockerfileを完全に分けることにする
-# ARG GO_PROD_IMAGE
-
-# # ----- production builder -----
-
-# FROM ${GO_DEV_IMAGE} AS builder
-
-# WORKDIR /
-
-# COPY go.mod go.sum ./
-# RUN go mod download
-# COPY . .
-# RUN go build -trimpath -ldflags "-w -s" -o app
-
-# # ----- production -----
-
-# FROM ${GO_PROD_IMAGE} AS deploy
-# COPY --from=builder /app/app .
-# CMD ["./app"]
-
 
 # ----- development -----
 
@@ -45,8 +25,6 @@ RUN ls -l $PWD/git*.* | awk '{print "source "$9}' >> ~/.bashrc
 RUN echo "GIT_PS1_SHOWDIRTYSTATE=true" >> ~/.bashrc
 RUN echo "GIT_PS1_SHOWUNTRACKEDFILES=true" >> ~/.bashrc
 RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
-
-# RUN echo 'export PS1="\[\033[01;32m\]\u@\h\[\033[01;33m\] \w \[\033[01;31m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;34m\]\\$ \[\033[00m\]"' >> ~/.bashrc
 
 RUN echo 'export PS1="\[\033[01;31m\]\u\[\033[01;33m\]@\h \[\033[01;36m\]\\d \\t \[\033[01;32m\]\w \[\033[01;34m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;35m\]\\$ \[\033[00m\]"' >> ~/.bashrc
 

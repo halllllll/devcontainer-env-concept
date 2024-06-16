@@ -4,12 +4,11 @@ services:
       context: .
       args:
         - GO_DEV_IMAGE=${GO_DEV_IMAGE}
-        # - GO_PROD_IMAGE=${GO_PROD_IMAGE}
       dockerfile: ./Dockerfile.dev.server
       target: dev
     container_name: serverApp
     working_dir: /workspace/server # devcontainerと合わせる
-    env_file:
+    env_file: # TODO: environmentで使うものだけを列挙したほうがよさそう
       - ../../.env
     tty: true
     volumes:
@@ -18,8 +17,6 @@ services:
     depends_on:
         db:
           condition: service_healthy
-    # networks:　よくよく考えたら開発時は不要
-    #   - container-link
   db:
     image: postgres:latest
     container_name: appDB
@@ -31,7 +28,7 @@ services:
       # PGDATA: /var/lib/postgresql/data/pgdata
       TZ: "Asia/Tokyo"
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --no-locale"
-    env_file:
+    env_file: # TODO: environmentで使うものだけを列挙したほうがよさそう
       - ../../.env
     healthcheck:
       test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
