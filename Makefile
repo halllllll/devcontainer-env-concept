@@ -1,11 +1,24 @@
 include .env
-# build image for production
-# docker compose -f {compose.yaml} build --no-cache --force-rm {service name}
-# TODO: 環境変数の設定 `--build-arg` or secrets
-build:
-	docker compose -f ./compose.prod.yml  build --no-cache --force-rm app
 
-# save production image tar.tz
-# docker save {imagename:tag} -o {filename}.tar
+build:
+	time DOCKER_BUILDKIT=1 docker build -f ./docker/Dockerfile.prod \
+	--platform ${PROD_PLATFORM} \
+	--progress=plain \
+	--build-arg FRONT_IMAGE=${BUN_IMAGE} \
+	--build-arg SERVER_1STSTAGE_IMAGE=${GO_DEV_IMAGE} \
+  --build-arg SERVER_PROD_IMAGE=${GO_PROD_IMAGE} \
+	--build-arg GO_OS=${PROD_OS} \
+	--build-arg GO_ARCH=${PROD_ARCH} \
+	--build-arg GO_PROD_PLATFORM=${PROD_PLATFORM} \
+	--build-arg EXPOSE_PORT=${CONTAINER_PORT} \
+	--no-cache \
+	--force-rm \
+	-t ${IMAGE_NAME}:latest . \
+	&& docker image prune -f
+
 save:
 	docker save ${IMAGE_NAME}:latest -o app.tar
+
+# ローカル確認用(ポートは好きに変えてね)
+run:
+	docker container run --rm -p 5522:${CONTAINER_PORT} -e GO_APP_PORT=${CONTAINER_PORT} ${IMAGE_NAME}

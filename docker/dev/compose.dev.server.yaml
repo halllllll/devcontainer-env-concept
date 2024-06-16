@@ -8,20 +8,17 @@ services:
       dockerfile: ./Dockerfile.dev.server
       target: dev
     container_name: serverApp
-    working_dir: /workspace
+    working_dir: /workspace/server # devcontainerと合わせる
     env_file:
-      - "./.env"
+      - ../../.env
     tty: true
     volumes:
       - ../..:/workspace:cached
-    environment:
-      # POSTGRES_HOST: "${POSTGRES_HOST}"
-      PORT: ${GO_DEV_PORT}
     restart: always
     depends_on:
         db:
           condition: service_healthy
-    # networks:
+    # networks:　よくよく考えたら開発時は不要
     #   - container-link
   db:
     image: postgres:latest
@@ -29,13 +26,13 @@ services:
     restart: unless-stopped
     volumes:
       - app-db:/var/lib/postgresql/data
-      - ../_tools/postgres/init:/docker-entrypoint-initdb.d
+      - ./_tools/postgres/init:/docker-entrypoint-initdb.d
     environment:
       # PGDATA: /var/lib/postgresql/data/pgdata
       TZ: "Asia/Tokyo"
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --no-locale"
     env_file:
-      - .env
+      - ../../.env
     healthcheck:
       test: pg_isready -U "${POSTGRES_USER:-postgres}" || exit 1
       interval: 10s

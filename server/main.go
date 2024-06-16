@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"embed"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -17,10 +19,21 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+//go:embed static/*
+var static embed.FS
+
+// env list
+type Env string
+
+const (
+	development Env = "dev"
+	productin   Env = "prod"
+)
+
 func corsHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		if r.Method == "OPTIONS" {
 			return
@@ -29,14 +42,37 @@ func corsHandler(next http.Handler) http.Handler {
 	})
 }
 
-func NewMux() http.Handler {
+func NewMux(cfg *config.Config) http.Handler {
 	mux := michi.NewRouter()
 	mux.Use(corsHandler)
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		_, _ = w.Write([]byte(`{"status": "ok"}`))
 	})
-	mux.HandleFunc("GET /hello", hello)
+	// dev or prodで出し分け
+	// switch strings.ToLower(cfg.Env) {
+	// case "dev":
+	// case "prod":
+	// 	build, err := fs.Sub(static, "static")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	mux.Handle("/", http.FileServer(http.FS(build)))
+	// default:
+	// 	log.Fatalf("invalid env value: %v", cfg.Env)
+	// }
+	build, err := fs.Sub(static, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	mux.Handle("/", http.FileServer(http.FS(build)))
+
+	mux.Route("/api", func(sub *michi.Router) {
+		sub.HandleFunc("GET /test", func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprintf(w, "yo!!!")
+		})
+		sub.HandleFunc("GET /hello", hello)
+	})
 	mux.HandleFunc("GET /htmlhello", htmlHello)
 	return mux
 }
@@ -47,7 +83,7 @@ func main() {
 		log.Fatal(err)
 	}
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Port))
-	mux := NewMux()
+	mux := NewMux(cfg)
 
 	if err != nil {
 		log.Fatal(err)

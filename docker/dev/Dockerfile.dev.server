@@ -51,7 +51,9 @@ RUN echo "GIT_PS1_SHOWUPSTREAM=auto" >> ~/.bashrc
 RUN echo 'export PS1="\[\033[01;31m\]\u\[\033[01;33m\]@\h \[\033[01;36m\]\\d \\t \[\033[01;32m\]\w \[\033[01;34m\]\$(__git_ps1 \"(%s)\") \\n\[\033[01;35m\]\\$ \[\033[00m\]"' >> ~/.bashrc
 
 RUN go install github.com/air-verse/air@latest
-RUN go install github.com/sqldef/sqldef/cmd/psqldef@latest
+
+#検証用にイメージ作りを繰り返し試すには遅すぎるので試すときは以下のDLはいったんコメントアウト
+RUN go install github.com/sqldef/sqldef/cmd/psqldef@latest 
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
 
 CMD ["air"]

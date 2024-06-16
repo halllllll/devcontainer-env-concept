@@ -1,16 +1,17 @@
 # * 環境によってはDockerfileの先頭行コマンドの制約がある
 # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#from
-ARG BUN_VER
-ARG GO_DEV_VER
-ARG GO_PROD_VER
+ARG FRONT_IMAGE
+ARG SERVER_1STSTAGE_IMAGE
+ARG SERVER_PROD_IMAGE
 ARG GO_OS
 ARG GO_ARCH
 ARG GO_PROD_PLATFORM
+ARG EXPOSE_PORT
 
 # Goアプリにフロントエンドコードを同梱した単一のイメージを作成する
 
 # build frontend code
-FROM oven/bun:${BUN_VER} AS frontend
+FROM ${FRONT_IMAGE} AS frontend
 WORKDIR /app
 
 # Config Bun (不要？)
@@ -25,10 +26,10 @@ COPY ./client .
 RUN bunx --bun vite build
 
 # golang app for 1st building step
-ARG GO_DEV_VER
+ARG SERVER_1STSTAGE_IMAGE
 ARG GO_OS
 ARG GO_ARCH
-FROM golang:${GO_DEV_VER} AS builder
+FROM ${SERVER_1STSTAGE_IMAGE} AS builder
 
 WORKDIR /app
 
@@ -38,19 +39,27 @@ RUN go mod download
 COPY ./server .
 COPY . .
 
+# フロントエンドコードをもってくる
+COPY --from=frontend /app/dist /app/static
+
 # 1st building
 # *本番環境にあわせる
 RUN GOOS=${GO_OS} GOARCH=${GO_ARCH} go build -trimpath -ldflags "-w -s" -o main /app/main.go
 
 # 2nd building step, merge frontend code
-ARG GO_PROD_VER
+ARG SERVER_PROD_IMAGE
 ARG GO_PROD_PLATFORM
-FROM --platform=${GO_PROD_PLATFORM} gcr.io/distroless/${GO_PROD_VER} AS production
+ARG EXPOSE_PORT
 
+
+FROM --platform=${GO_PROD_PLATFORM} ${SERVER_PROD_IMAGE} AS production
+# とりあえずフロントエンドコードがバックエンドのイメージに同梱されているか確認するためにローカルで作る。あとdistrolessじゃなくてdebianイメージにする（シェルがなくてわからん）
+
+
+# FROM ${SERVER_PROD_IMAGE} AS production
 WORKDIR /app
 COPY --from=builder /app/main .
-COPY --from=frontend /app/dist .
 # COPY .env . TODO: secretsとかを使いたい TODO: secretsはさほど意味ないらしい？
 
-# EXPOSE 8085
+EXPOSE ${EXPOSE_PORT}
 CMD [ "/app/main" ]

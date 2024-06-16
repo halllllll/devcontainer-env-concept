@@ -3,24 +3,21 @@ services:
     build:
       context: .
       args:
-        - BUN_VER=${BUN_DEV_VER}
+        - BUN_IMAGE=${BUN_IMAGE}
       dockerfile: ./Dockerfile.dev.front
     container_name: frontApp
-    working_dir: /workspace
+    working_dir: /workspace/client
     env_file:
-      - "./.env"
+      - ../../.env
     tty: true
     volumes:
       - ../..:/workspace:cached
 
     restart: always
-    # ports: # 開放しないと開発時にブラウザから疎通できない??????
-    #   # - "127.0.0.1:5173:5173"
-    #   - 5173:5173
     command: /bin/sh -c "while sleep 1000; do :; done"
-    networks:
-      - devcontainer-network
+    # networks: よくよく考えたら開発時は不要
+    #   - devcontainer-network
 
-networks:
-  devcontainer-network:
-    external: true
+# networks:
+#   devcontainer-network:
+#     external: true

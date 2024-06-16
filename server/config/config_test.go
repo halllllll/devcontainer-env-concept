@@ -8,7 +8,7 @@ import (
 func TestXxx(t *testing.T) {
 	wantPort := 3333
 	// テスト用の環境変数
-	t.Setenv("PORT", fmt.Sprint(wantPort))
+	t.Setenv("GO_APP_PORT", fmt.Sprint(wantPort))
 	got, err := New()
 	if err != nil {
 		t.Fatalf("cannot create config: %v", err)
