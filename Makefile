@@ -1,7 +1,7 @@
 include .env
 
 build:
-	time DOCKER_BUILDKIT=1 docker build -f ./docker/Dockerfile.prod \
+	time docker build -f ./docker/Dockerfile.prod \
 	--platform ${PROD_PLATFORM} \
 	--progress=plain \
 	--build-arg FRONT_IMAGE=${BUN_IMAGE} \
@@ -15,7 +15,6 @@ build:
 	--force-rm \
 	-t ${IMAGE_NAME}:latest . \
 	&& docker image prune -f
-ß
 save:
 	docker save ${IMAGE_NAME}:latest -o app.tar
 
